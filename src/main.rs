@@ -2,28 +2,45 @@ use arboard::Clipboard;
 use clap::Parser;
 use std::fs::File;
 use std::io::{self, Read, Write};
+use std::marker::PhantomData;
 use std::process::exit;
 
+/// TypeState state definitions
+pub mod string_states {
+    use super::StringState;
+
+    pub struct RawInput {}
+    pub struct CleanedText {}
+
+    /// RawInput state: may data may contain dangerous characters - allows detect and chars operations to examine content
+    impl StringState for RawInput {}
+
+    /// CleanedText state: dangerous characters have been removed - allows strip, defang, censor, and sluggify operations
+    impl StringState for CleanedText {}
+}
+
+// TODO do we want to seal this trait? probably
+pub trait StringState {}
+
 /// TypeState wrapper for text processing
-/// RawInput state - allows detect and chars operations
-pub struct RawInput {
+pub struct UnicodeString<S: StringState> {
     text: String,
+    _marker: PhantomData<S>,
 }
 
-/// CleanedText state - allows strip, defang, and censor operations
-pub struct CleanedText {
-    text: String,
-}
-
-impl RawInput {
+impl UnicodeString<string_states::RawInput> {
     pub fn new(text: String) -> Self {
-        Self { text }
+        Self {
+            text,
+            _marker: PhantomData,
+        }
     }
 
     /// Clean the text and transition to CleanedText state
-    pub fn clean(self) -> CleanedText {
-        CleanedText {
+    pub fn clean(self) -> UnicodeString<string_states::CleanedText> {
+        UnicodeString::<string_states::CleanedText> {
             text: clean_text(self.text),
+            _marker: PhantomData,
         }
     }
 
@@ -36,23 +53,14 @@ impl RawInput {
     pub fn show_character_info(self) -> String {
         show_character_info(self.text)
     }
-
-    /// Convert to sluggified text directly from raw input
-    pub fn sluggify(self) -> String {
-        sluggify_text(self.text)
-    }
-
-    /// Get the inner text
-    pub fn into_string(self) -> String {
-        self.text
-    }
 }
 
-impl CleanedText {
+impl UnicodeString<string_states::CleanedText> {
     /// Strip HTML tags
     pub fn strip_html(self) -> Self {
         Self {
             text: strip_html(self.text),
+            _marker: PhantomData,
         }
     }
 
@@ -60,6 +68,7 @@ impl CleanedText {
     pub fn defang_links(self) -> Self {
         Self {
             text: defang_links(self.text),
+            _marker: PhantomData,
         }
     }
 
@@ -67,6 +76,7 @@ impl CleanedText {
     pub fn censor_profanity(self) -> Self {
         Self {
             text: censor_profanity(self.text),
+            _marker: PhantomData,
         }
     }
 
@@ -136,7 +146,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Get input text and wrap in RawInput state
     let input_text = get_input_text(&args)?;
-    let raw_input = RawInput::new(input_text);
+    let raw_input = UnicodeString::new(input_text);
 
     // Handle operations that require RawInput state first
     let output_text = if args.detect {
