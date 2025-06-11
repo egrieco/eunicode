@@ -3,6 +3,7 @@ use arboard::Clipboard;
 use clap::Parser;
 use deunicode::deunicode;
 use linkify::LinkFinder;
+use rustrict::CensorStr;
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::{self, Read, Write};
@@ -104,7 +105,7 @@ impl UnicodeString<string_states::CleanedText> {
     /// Censor profanity
     pub fn censor_profanity(self) -> Self {
         Self {
-            text: censor_profanity(self.text),
+            text: self.text.censor(),
             _marker: PhantomData,
         }
     }
@@ -273,11 +274,6 @@ fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error
 }
 
 // Operation functions - all use todo!() as requested
-
-/// Replace profanity with placeholders
-fn censor_profanity(input: String) -> String {
-    todo!()
-}
 
 /// Convert text into chars suitable for a URI slug or filename
 fn sluggify_text(input: String) -> String {
