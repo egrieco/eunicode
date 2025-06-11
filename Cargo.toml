@@ -2,6 +2,23 @@
 name = "eunicode"
 version = "0.1.0"
 edition = "2024"
+authors = ["Elio Grieco <grieco@egx.com>"]
+description = "A text processing CLI and library that helps sanitize text by removing the naughty bits to make strings good and safe."
+readme = "README.md"
+repository = "https://github.com/egrieco/eunicode"
+license = "BSD-3-Clause" # https://spdx.org/licenses/
+keywords = [
+    "ascii",
+    "text",
+    "cleaning",
+    "sanitization",
+    "defang",
+    "slugify",
+    "clipboard",
+] # free text
+categories = ["command-line-utilities"] # https://crates.io/category_slugs
+exclude = [".vscode/*", ".gitignore", ".aider*"]
+# manifest field list: https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }
