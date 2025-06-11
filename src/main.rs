@@ -259,34 +259,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         exit(0)
     } else {
-        // Process through the normal pipeline
-        if args.clean || args.strip || args.defang || args.censor || args.slugify {
-            let mut cleaned = raw_input.clean();
+        // Clean the raw input. If we aren't doing analysis, we always want to clean the text.
+        let mut cleaned = raw_input.clean();
 
-            // If we have cleaned text, apply operations that work on CleanedText
-
-            if args.strip {
-                cleaned = cleaned.strip_html();
-            }
-            if args.defang {
-                cleaned = cleaned.defang_links();
-            }
-            if args.censor {
-                cleaned = cleaned.censor_profanity();
-            }
-            if args.slugify {
-                cleaned = cleaned.sluggify();
-            }
-
-            // Handle output
-            write_output(&args, &cleaned.into_string())?;
-        } else {
-            // No cleaning was done, just return the original text
-            eprintln!(
-                "Please choose an operation. We are quitting without printing to avoid printing potentially dangerous textual values."
-            );
-            exit(1)
+        // Apply additional text manipulations
+        // TODO reorder these to minimize wasted computation
+        if args.strip {
+            cleaned = cleaned.strip_html();
         }
+        if args.defang {
+            cleaned = cleaned.defang_links();
+        }
+        if args.censor {
+            cleaned = cleaned.censor_profanity();
+        }
+        if args.slugify {
+            cleaned = cleaned.sluggify();
+        }
+
+        // Handle output
+        write_output(&args, &cleaned.into_string())?;
     };
 
     Ok(())
