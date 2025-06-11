@@ -2,6 +2,7 @@ use ammonia::Builder;
 use arboard::Clipboard;
 use clap::Parser;
 use deunicode::deunicode;
+use limace::Slugifier;
 use linkify::LinkFinder;
 use rustrict::CensorStr;
 use std::collections::HashSet;
@@ -113,7 +114,7 @@ impl UnicodeString<string_states::CleanedText> {
     /// Convert to sluggified text
     pub fn sluggify(self) -> Self {
         Self {
-            text: sluggify_text(self.text),
+            text: Slugifier::default().slugify(self.text),
             _marker: PhantomData,
         }
     }
@@ -163,7 +164,7 @@ struct Args {
 
     /// Convert text into chars suitable for a URI slug or filename
     #[arg(long)]
-    sluggify: bool,
+    slugify: bool,
 
     /// Detect dangerous characters in the input
     #[arg(long)]
@@ -192,7 +193,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         exit(0)
     } else {
         // Process through the normal pipeline
-        if args.clean || args.strip || args.defang || args.censor || args.sluggify {
+        if args.clean || args.strip || args.defang || args.censor || args.slugify {
             let mut cleaned = raw_input.clean();
 
             // If we have cleaned text, apply operations that work on CleanedText
@@ -206,7 +207,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if args.censor {
                 cleaned = cleaned.censor_profanity();
             }
-            if args.sluggify {
+            if args.slugify {
                 cleaned = cleaned.sluggify();
             }
 
@@ -274,11 +275,6 @@ fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error
 }
 
 // Operation functions - all use todo!() as requested
-
-/// Convert text into chars suitable for a URI slug or filename
-fn sluggify_text(input: String) -> String {
-    todo!()
-}
 
 /// Detect dangerous characters in the input
 fn detect_dangerous_chars(input: String) -> String {
