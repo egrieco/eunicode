@@ -9,10 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-id-f811a245a70c313fdd10d685f993c6d7d89a4272/>
 <csr-id-0a3c60df9e0e49c7be124074bc1e485c1775bc16/>
+<csr-id-b3558d21e059c4f4af36966164aaa9807a1519a9/>
 
 ### Chore
 
  - <csr-id-f811a245a70c313fdd10d685f993c6d7d89a4272/> Update manifest fields
+
+### Chore
+
+ - <csr-id-b7bbe970e39ad095c5af16f4a32aceb173cdaa57/> Remove excess keywords
+   Apparently crates.io "expects at most 5 keywords per crate"
 
 ### Chore
 
@@ -51,8 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 23 commits contributed to the release over the course of 1 calendar day.
- - 18 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 25 commits contributed to the release over the course of 1 calendar day.
+ - 19 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
 ### Commit Details
@@ -62,6 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Remove excess keywords ([`b7bbe97`](https://github.com/egrieco/eunicode/commit/b7bbe970e39ad095c5af16f4a32aceb173cdaa57))
+    - Release eunicode v0.1.0 ([`7f52da4`](https://github.com/egrieco/eunicode/commit/7f52da45218edf3ce8713089e0f906afafbe52e3))
     - Add changelog ([`b3558d2`](https://github.com/egrieco/eunicode/commit/b3558d21e059c4f4af36966164aaa9807a1519a9))
     - Update manifest fields ([`f811a24`](https://github.com/egrieco/eunicode/commit/f811a245a70c313fdd10d685f993c6d7d89a4272))
     - Relax dangerous character detection ([`7e001f8`](https://github.com/egrieco/eunicode/commit/7e001f8fba68182d97ed5b33e86653a9e11a834c))
