@@ -1,6 +1,8 @@
+use ammonia::Builder;
 use arboard::Clipboard;
 use clap::Parser;
 use deunicode::deunicode;
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::marker::PhantomData;
@@ -59,8 +61,12 @@ impl UnicodeString<string_states::RawInput> {
 impl UnicodeString<string_states::CleanedText> {
     /// Strip HTML tags
     pub fn strip_html(self) -> Self {
+        let text = Builder::new()
+            .tags(HashSet::default())
+            .clean(&self.text)
+            .to_string();
         Self {
-            text: strip_html(self.text),
+            text,
             _marker: PhantomData,
         }
     }
@@ -245,11 +251,6 @@ fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error
 }
 
 // Operation functions - all use todo!() as requested
-
-/// Remove HTML tags
-fn strip_html(input: String) -> String {
-    todo!()
-}
 
 /// De-fang hyperlinks
 fn defang_links(input: String) -> String {
