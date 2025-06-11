@@ -3,6 +3,83 @@ use clap::Parser;
 use std::fs::File;
 use std::io::{self, Read, Write};
 
+/// TypeState wrapper for text processing
+/// RawInput state - allows detect and chars operations
+pub struct RawInput {
+    text: String,
+}
+
+/// CleanedText state - allows strip, defang, and censor operations
+pub struct CleanedText {
+    text: String,
+}
+
+impl RawInput {
+    pub fn new(text: String) -> Self {
+        Self { text }
+    }
+
+    /// Clean the text and transition to CleanedText state
+    pub fn clean(self) -> CleanedText {
+        CleanedText {
+            text: clean_text(self.text),
+        }
+    }
+
+    /// Detect dangerous characters (only available on RawInput)
+    pub fn detect_dangerous_chars(self) -> String {
+        detect_dangerous_chars(self.text)
+    }
+
+    /// Show character info (only available on RawInput)
+    pub fn show_character_info(self) -> String {
+        show_character_info(self.text)
+    }
+
+    /// Convert to sluggified text directly from raw input
+    pub fn sluggify(self) -> String {
+        sluggify_text(self.text)
+    }
+
+    /// Get the inner text
+    pub fn into_string(self) -> String {
+        self.text
+    }
+}
+
+impl CleanedText {
+    /// Strip HTML tags
+    pub fn strip_html(self) -> Self {
+        Self {
+            text: strip_html(self.text),
+        }
+    }
+
+    /// De-fang hyperlinks
+    pub fn defang_links(self) -> Self {
+        Self {
+            text: defang_links(self.text),
+        }
+    }
+
+    /// Censor profanity
+    pub fn censor_profanity(self) -> Self {
+        Self {
+            text: censor_profanity(self.text),
+        }
+    }
+
+    /// Convert to sluggified text
+    pub fn sluggify(self) -> String {
+        sluggify_text(self.text)
+    }
+
+    /// Get the inner text
+    pub fn into_string(self) -> String {
+        self.text
+    }
+}
+
 /// eunicode is a text processing CLI and library that helps sanitize text
 /// by removing the naughty bits to make strings good and safe.
 #[derive(Parser)]
@@ -56,33 +133,50 @@ struct Args {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
-    // Get input text
+    // Get input text and wrap in RawInput state
     let input_text = get_input_text(&args)?;
+    let raw_input = RawInput::new(input_text);
 
-    // Process the text through selected operations
-    let mut output_text = input_text;
+    // Handle operations that require RawInput state first
+    let output_text = if args.detect {
+        raw_input.detect_dangerous_chars()
+    } else if args.chars {
+        raw_input.show_character_info()
+    } else if args.sluggify && !args.clean {
+        // Sluggify directly from raw input if not cleaning first
+        raw_input.sluggify()
+    } else {
+        // Process through the normal pipeline
+        let mut processed = if args.clean {
+            Some(raw_input.clean())
+        } else {
+            None
+        };
 
-    if args.clean {
-        output_text = clean_text(output_text);
-    }
-    if args.strip {
-        output_text = strip_html(output_text);
-    }
-    if args.defang {
-        output_text = defang_links(output_text);
-    }
-    if args.censor {
-        output_text = censor_profanity(output_text);
-    }
-    if args.sluggify {
-        output_text = sluggify_text(output_text);
-    }
-    if args.detect {
-        output_text = detect_dangerous_chars(output_text);
-    }
-    if args.chars {
-        output_text = show_character_info(output_text);
-    }
+        // If we have cleaned text, apply operations that work on CleanedText
+        if let Some(cleaned) = processed {
+            let mut result = cleaned;
+            
+            if args.strip {
+                result = result.strip_html();
+            }
+            if args.defang {
+                result = result.defang_links();
+            }
+            if args.censor {
+                result = result.censor_profanity();
+            }
+            
+            if args.sluggify {
+                result.sluggify()
+            } else {
+                result.into_string()
+            }
+        } else {
+            // No cleaning was done, just return the original text
+            raw_input.into_string()
+        }
+    };
 
     // Handle output
     write_output(&args, &output_text)?;
