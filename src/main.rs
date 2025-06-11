@@ -2,6 +2,7 @@ use ammonia::Builder;
 use arboard::Clipboard;
 use clap::Parser;
 use deunicode::deunicode;
+use linkify::LinkFinder;
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::{self, Read, Write};
@@ -73,8 +74,29 @@ impl UnicodeString<string_states::CleanedText> {
 
     /// De-fang hyperlinks
     pub fn defang_links(self) -> Self {
+        // let mut text = String::new();
+        let text = LinkFinder::new()
+            .spans(&self.text)
+            .map(|span| match span.kind() {
+                Some(link_kind) => match link_kind {
+                    linkify::LinkKind::Url => {
+                        // TODO use better "defanging logic"
+                        span.as_str()
+                            .replace("ftp", "fXp")
+                            .replace("http", "hXXp")
+                            .replace('.', "[.]")
+                    }
+                    linkify::LinkKind::Email => {
+                        span.as_str().replace('@', "[@]").replace('.', "[.]")
+                    }
+                    // linkify has the LinkKind enum marked as non-exhaustive so we have to have this catch-all
+                    _ => unimplemented!("unsupported link type encountered"),
+                },
+                None => span.as_str().to_string(),
+            })
+            .collect();
         Self {
-            text: defang_links(self.text),
+            text,
             _marker: PhantomData,
         }
     }
@@ -251,11 +273,6 @@ fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error
 }
 
 // Operation functions - all use todo!() as requested
-
-/// De-fang hyperlinks
-fn defang_links(input: String) -> String {
-    todo!()
-}
 
 /// Replace profanity with placeholders
 fn censor_profanity(input: String) -> String {
