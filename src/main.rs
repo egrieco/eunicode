@@ -10,6 +10,7 @@ use std::fs::File;
 use std::io::{self, Read, Write};
 use std::marker::PhantomData;
 use std::process::exit;
+use unicode_security::{RestrictionLevel::ASCIIOnly, RestrictionLevelDetection};
 
 /// TypeState state definitions
 pub mod string_states {
@@ -51,8 +52,15 @@ impl UnicodeString<string_states::RawInput> {
     }
 
     /// Detect dangerous characters (only available on RawInput)
-    pub fn detect_dangerous_chars(self) -> String {
-        detect_dangerous_chars(self.text)
+    pub fn detect_dangerous_chars(self) {
+        if self.text.check_restriction_level(ASCIIOnly) {
+            eprintln!("String is safe");
+            println!("{}", self.text);
+            exit(0)
+        } else {
+            eprintln!("String has restricted characters!");
+            exit(2)
+        }
     }
 
     /// Show character info (only available on RawInput)
@@ -275,11 +283,6 @@ fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error
 }
 
 // Operation functions - all use todo!() as requested
-
-/// Detect dangerous characters in the input
-fn detect_dangerous_chars(input: String) -> String {
-    todo!()
-}
 
 /// Show characters present in input, their names, and code points
 fn show_character_info(input: String) -> String {
