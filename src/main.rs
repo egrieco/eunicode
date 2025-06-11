@@ -2,6 +2,7 @@ use arboard::Clipboard;
 use clap::Parser;
 use std::fs::File;
 use std::io::{self, Read, Write};
+use std::process::exit;
 
 /// TypeState wrapper for text processing
 /// RawInput state - allows detect and chars operations
@@ -156,7 +157,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // If we have cleaned text, apply operations that work on CleanedText
         if let Some(cleaned) = processed {
             let mut result = cleaned;
-            
+
             if args.strip {
                 result = result.strip_html();
             }
@@ -166,7 +167,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if args.censor {
                 result = result.censor_profanity();
             }
-            
+
             if args.sluggify {
                 result.sluggify()
             } else {
@@ -174,7 +175,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         } else {
             // No cleaning was done, just return the original text
-            raw_input.into_string()
+            eprintln!(
+                "Please choose an operation. We are quitting without printing to avoid printing potentially dangerous textual values."
+            );
+            exit(1)
         }
     };
 
