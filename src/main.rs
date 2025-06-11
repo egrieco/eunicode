@@ -88,27 +88,39 @@ impl UnicodeString<string_states::RawInput> {
     /// Detect dangerous characters (only available on RawInput)
     pub fn detect_dangerous_chars(self) {
         // TODO allow user selection of restriction level
-        if self.text.check_restriction_level(ASCIIOnly) {
-            eprintln!("String is safe");
-            println!("{}", self.text);
-            exit(0)
-        } else {
-            eprintln!("String has restricted characters!");
-            skeleton(&self.text).enumerate().for_each(|(i, c)| {
-                if !c.identifier_allowed() {
-                    eprintln!(
-                        "{} {}: {}: {}",
-                        i,
-                        // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
-                        deunicode(&c.to_string()),
-                        c.identifier_type()
-                            .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
-                        get_name(c as u32),
-                    );
-                }
-            });
-            exit(2)
+        if !self.text.check_restriction_level(ASCIIOnly) {
+            // the ASCIIOnly check is too restrictive as it is intended for identifiers
+            let char_names: Vec<_> = skeleton(&self.text)
+                .enumerate()
+                .flat_map(|(i, c)| {
+                    if !(c.is_ascii_graphic() || c.is_ascii_whitespace()) {
+                        Some(format!(
+                            "{} {}: {}: {}",
+                            i,
+                            // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
+                            deunicode(&c.to_string()),
+                            c.identifier_type().map_or("Unknown Character Type", |t| {
+                                &char_identifier_to_string(t)
+                            }),
+                            get_name(c as u32),
+                        ))
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+            // we'll only throw an error if we found non-graphic, non-whitespace characters beyond the ASCII range
+            if char_names.len() > 0 {
+                eprintln!("String has restricted characters!");
+                char_names.iter().for_each(|line| eprintln!("{line}"));
+                exit(2)
+            }
         }
+        // otherwise the string should be safe
+        // TODO fix bug detecting strings like "Æneid"
+        eprintln!("String is safe");
+        println!("{}", self.text);
+        exit(0)
     }
 
     /// Show character info (only available on RawInput)
