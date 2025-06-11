@@ -153,12 +153,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         raw_input.detect_dangerous_chars()
     } else if args.chars {
         raw_input.show_character_info()
-    } else if args.sluggify && !args.clean {
-        // Sluggify directly from raw input if not cleaning first
-        raw_input.sluggify()
     } else {
         // Process through the normal pipeline
-        let mut processed = if args.clean {
+        let processed = if args.clean {
             Some(raw_input.clean())
         } else {
             None
