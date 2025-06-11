@@ -1,93 +1,177 @@
-use clap::Parser;
 use arboard::Clipboard;
-use std::io::{self, Read};
+use clap::Parser;
+use std::fs::File;
+use std::io::{self, Read, Write};
 
+/// eunicode is a text processing CLI and library that helps sanitize text
+/// by removing the naughty bits to make strings good and safe.
 #[derive(Parser)]
 #[command(name = "eunicode")]
-#[command(about = "A Unicode character utility")]
-struct Cli {
-    #[command(subcommand)]
-    command: Commands,
+#[command(
+    about = "A text processing CLI and library that helps sanitize text by removing the naughty bits to make strings good and safe"
+)]
+#[command(version)]
+struct Args {
+    /// Input text (if not provided via stdin or clipboard)
+    #[arg(trailing_var_arg = true)]
+    input: Vec<String>,
+
+    /// Output files to write results to
+    #[arg(long = "output", value_name = "FILE")]
+    output_files: Vec<String>,
+
+    /// Also copy output to clipboard (suppresses stdout unless redirected)
+    #[arg(long)]
+    clipboard: bool,
+
+    /// Normalize Unicode characters to only safe, ASCII text chars
+    #[arg(long)]
+    clean: bool,
+
+    /// Remove HTML tags
+    #[arg(long)]
+    strip: bool,
+
+    /// De-fang hyperlinks
+    #[arg(long)]
+    defang: bool,
+
+    /// Replace profanity with placeholders
+    #[arg(long)]
+    censor: bool,
+
+    /// Convert text into chars suitable for a URI slug or filename
+    #[arg(long)]
+    sluggify: bool,
+
+    /// Detect dangerous characters in the input
+    #[arg(long)]
+    detect: bool,
+
+    /// Show characters present in input, their names, and code points
+    #[arg(long)]
+    chars: bool,
 }
 
-#[derive(clap::Subcommand)]
-enum Commands {
-    /// Convert text to Unicode codepoints
-    Encode {
-        /// Text to encode (reads from stdin if not provided)
-        text: Option<String>,
-        /// Copy result to clipboard
-        #[arg(short, long)]
-        copy: bool,
-    },
-    /// Convert Unicode codepoints to text
-    Decode {
-        /// Codepoints to decode (reads from stdin if not provided)
-        codepoints: Option<String>,
-        /// Copy result to clipboard
-        #[arg(short, long)]
-        copy: bool,
-    },
-    /// Show information about a Unicode character
-    Info {
-        /// Character to analyze
-        character: String,
-    },
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let args = Args::parse();
+
+    // Get input text
+    let input_text = get_input_text(&args)?;
+
+    // Process the text through selected operations
+    let mut output_text = input_text;
+
+    if args.clean {
+        output_text = clean_text(output_text);
+    }
+    if args.strip {
+        output_text = strip_html(output_text);
+    }
+    if args.defang {
+        output_text = defang_links(output_text);
+    }
+    if args.censor {
+        output_text = censor_profanity(output_text);
+    }
+    if args.sluggify {
+        output_text = sluggify_text(output_text);
+    }
+    if args.detect {
+        output_text = detect_dangerous_chars(output_text);
+    }
+    if args.chars {
+        output_text = show_character_info(output_text);
+    }
+
+    // Handle output
+    write_output(&args, &output_text)?;
+
+    Ok(())
 }
 
-fn main() {
-    let cli = Cli::parse();
-
-    match cli.command {
-        Commands::Encode { text, copy } => {
-            let input = get_input(text);
-            let result = encode_text(&input);
-            output_result(&result, copy);
-        }
-        Commands::Decode { codepoints, copy } => {
-            let input = get_input(codepoints);
-            let result = decode_codepoints(&input);
-            output_result(&result, copy);
-        }
-        Commands::Info { character } => {
-            show_character_info(&character);
+/// Get input text from stdin, CLI args, or clipboard in that order of preference
+fn get_input_text(args: &Args) -> Result<String, Box<dyn std::error::Error>> {
+    // Check if stdin has data (not a TTY and has content)
+    if !atty::is(atty::Stream::Stdin) {
+        let mut buffer = String::new();
+        io::stdin().read_to_string(&mut buffer)?;
+        if !buffer.is_empty() {
+            return Ok(buffer);
         }
     }
+
+    // Use CLI arguments if provided
+    if !args.input.is_empty() {
+        return Ok(args.input.join(" "));
+    }
+
+    // Fall back to clipboard
+    let mut clipboard = Clipboard::new()?;
+    let clipboard_text = clipboard.get_text()?;
+    Ok(clipboard_text)
 }
 
-fn get_input(arg: Option<String>) -> String {
-    match arg {
-        Some(text) => text,
-        None => {
-            if atty::is(atty::Stream::Stdin) {
-                eprintln!("Error: No input provided and stdin is a terminal");
-                std::process::exit(1);
-            }
-            let mut buffer = String::new();
-            io::stdin().read_to_string(&mut buffer).expect("Failed to read from stdin");
-            buffer.trim().to_string()
+/// Write output to appropriate destinations based on args
+fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let stdout_is_redirected = !atty::is(atty::Stream::Stdout);
+
+    // Write to output files
+    for file_path in &args.output_files {
+        let mut file = File::create(file_path)?;
+        file.write_all(text.as_bytes())?;
+    }
+
+    // Handle clipboard output
+    if args.clipboard {
+        let mut clipboard = Clipboard::new()?;
+        clipboard.set_text(text)?;
+
+        // Only write to stdout if it's redirected when clipboard flag is used
+        if stdout_is_redirected {
+            print!("{}", text);
         }
+    } else {
+        // Normal stdout output when clipboard flag is not used
+        print!("{}", text);
     }
+
+    Ok(())
 }
 
-fn output_result(result: &str, copy: bool) {
-    println!("{}", result);
-    
-    if copy {
-        let mut clipboard = Clipboard::new().expect("Failed to access clipboard");
-        clipboard.set_text(result).expect("Failed to copy to clipboard");
-        eprintln!("Copied to clipboard");
-    }
+// Operation functions - all use todo!() as requested
+
+/// Normalize Unicode characters to only safe, ASCII text chars
+fn clean_text(input: String) -> String {
+    todo!()
 }
 
-fn encode_text(text: &str) -> String {
-    todo!("Implement text to Unicode codepoints conversion")
+/// Remove HTML tags
+fn strip_html(input: String) -> String {
+    todo!()
 }
 
-fn decode_codepoints(codepoints: &str) -> String {
-    todo!("Implement Unicode codepoints to text conversion")
+/// De-fang hyperlinks
+fn defang_links(input: String) -> String {
+    todo!()
 }
 
-fn show_character_info(character: &str) {
-    todo!("Implement character information display")
+/// Replace profanity with placeholders
+fn censor_profanity(input: String) -> String {
+    todo!()
+}
+
+/// Convert text into chars suitable for a URI slug or filename
+fn sluggify_text(input: String) -> String {
+    todo!()
+}
+
+/// Detect dangerous characters in the input
+fn detect_dangerous_chars(input: String) -> String {
+    todo!()
+}
+
+/// Show characters present in input, their names, and code points
+fn show_character_info(input: String) -> String {
+    todo!()
 }
