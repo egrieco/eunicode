@@ -7,3 +7,4 @@ edition = "2024"
 clap = { version = "4.0", features = ["derive"] }
 arboard = "3.0"
 atty = "0.2"
+deunicode = "1.6.2"

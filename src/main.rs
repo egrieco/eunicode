@@ -1,5 +1,6 @@
 use arboard::Clipboard;
 use clap::Parser;
+use deunicode::deunicode;
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::marker::PhantomData;
@@ -36,10 +37,10 @@ impl UnicodeString<string_states::RawInput> {
         }
     }
 
-    /// Clean the text and transition to CleanedText state
+    /// Normalize Unicode characters to only safe, ASCII text chars and transition to CleanedText state
     pub fn clean(self) -> UnicodeString<string_states::CleanedText> {
         UnicodeString::<string_states::CleanedText> {
-            text: clean_text(self.text),
+            text: deunicode(&self.text),
             _marker: PhantomData,
         }
     }
@@ -81,8 +82,11 @@ impl UnicodeString<string_states::CleanedText> {
     }
 
     /// Convert to sluggified text
-    pub fn sluggify(self) -> String {
-        sluggify_text(self.text)
+    pub fn sluggify(self) -> Self {
+        Self {
+            text: sluggify_text(self.text),
+            _marker: PhantomData,
+        }
     }
 
     /// Get the inner text
@@ -149,37 +153,36 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let raw_input = UnicodeString::new(input_text);
 
     // Handle operations that require RawInput state first
-    let output_text = if args.detect {
-        raw_input.detect_dangerous_chars()
-    } else if args.chars {
-        raw_input.show_character_info()
+    let output_text = if args.detect || args.chars {
+        // these functions are diagnostic and print their output directly
+        if args.detect {
+            raw_input.detect_dangerous_chars();
+        } else if args.chars {
+            raw_input.show_character_info();
+        }
+        exit(0)
     } else {
         // Process through the normal pipeline
-        let processed = if args.clean {
-            Some(raw_input.clean())
-        } else {
-            None
-        };
+        if args.clean || args.strip || args.defang || args.censor || args.sluggify {
+            let mut cleaned = raw_input.clean();
 
-        // If we have cleaned text, apply operations that work on CleanedText
-        if let Some(cleaned) = processed {
-            let mut result = cleaned;
+            // If we have cleaned text, apply operations that work on CleanedText
 
             if args.strip {
-                result = result.strip_html();
+                cleaned = cleaned.strip_html();
             }
             if args.defang {
-                result = result.defang_links();
+                cleaned = cleaned.defang_links();
             }
             if args.censor {
-                result = result.censor_profanity();
+                cleaned = cleaned.censor_profanity();
+            }
+            if args.sluggify {
+                cleaned = cleaned.sluggify();
             }
 
-            if args.sluggify {
-                result.sluggify()
-            } else {
-                result.into_string()
-            }
+            // Handle output
+            write_output(&args, &cleaned.into_string())?;
         } else {
             // No cleaning was done, just return the original text
             eprintln!(
@@ -188,9 +191,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             exit(1)
         }
     };
-
-    // Handle output
-    write_output(&args, &output_text)?;
 
     Ok(())
 }
@@ -245,11 +245,6 @@ fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error
 }
 
 // Operation functions - all use todo!() as requested
-
-/// Normalize Unicode characters to only safe, ASCII text chars
-fn clean_text(input: String) -> String {
-    todo!()
-}
 
 /// Remove HTML tags
 fn strip_html(input: String) -> String {
