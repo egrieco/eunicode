@@ -113,7 +113,18 @@ impl UnicodeString<string_states::RawInput> {
 
     /// Show character info (only available on RawInput)
     pub fn show_character_info(self) -> String {
-        show_character_info(self.text)
+        skeleton(&self.text).enumerate().for_each(|(i, c)| {
+            println!(
+                "{} {}: {}: {}",
+                i,
+                // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
+                deunicode(&c.to_string()),
+                c.identifier_type()
+                    .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
+                get_name(c as u32),
+            );
+        });
+        exit(2)
     }
 }
 
@@ -328,11 +339,4 @@ fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error
     }
 
     Ok(())
-}
-
-// Operation functions - all use todo!() as requested
-
-/// Show characters present in input, their names, and code points
-fn show_character_info(input: String) -> String {
-    todo!()
 }
