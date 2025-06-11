@@ -10,12 +10,10 @@ license = "BSD-3-Clause" # https://spdx.org/licenses/
 keywords = [
     "ascii",
     "text",
-    "cleaning",
     "sanitization",
     "defang",
-    "slugify",
     "clipboard",
-] # free text
+] # free text, 5 terms max
 categories = ["command-line-utilities"] # https://crates.io/category_slugs
 exclude = [".vscode/*", ".gitignore", ".aider*"]
 # manifest field list: https://doc.rust-lang.org/cargo/reference/manifest.html
