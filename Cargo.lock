@@ -145,6 +145,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9555578bc9e57714c812a1f84e4fc5b4d21fcb063490c624de019f7464c91268"
 
 [[package]]
+name = "charname"
+version = "1.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10c6f9f2aedbb264b252d1863283839a1319fba0e081e2b1dd7cddcb82b9b3c6"
+dependencies = [
+ "phf",
+ "phf_codegen",
+]
+
+[[package]]
 name = "clap"
 version = "4.5.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -308,6 +318,7 @@ dependencies = [
  "ammonia",
  "arboard",
  "atty",
+ "charname",
  "clap",
  "deunicode",
  "limace",

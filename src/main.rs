@@ -1,5 +1,6 @@
 use ammonia::Builder;
 use arboard::Clipboard;
+use charname::get_name;
 use clap::Parser;
 use deunicode::deunicode;
 use limace::Slugifier;
@@ -10,7 +11,40 @@ use std::fs::File;
 use std::io::{self, Read, Write};
 use std::marker::PhantomData;
 use std::process::exit;
-use unicode_security::{RestrictionLevel::ASCIIOnly, RestrictionLevelDetection};
+use unicode_security::{
+    GeneralSecurityProfile, RestrictionLevel::ASCIIOnly, RestrictionLevelDetection,
+    general_security_profile::IdentifierType, skeleton,
+};
+
+const NOT_CHARACTER: &str = "Not Character";
+const DEPRECATED: &str = "Deprecated";
+const DEFAULT_IGNORABLE: &str = "Default Ignorable";
+const NOT_NFKC: &str = "Not NFKC";
+const NOT_XID: &str = "Not XID";
+const EXCLUSION: &str = "Exclusion";
+const OBSOLETE: &str = "Obsolete";
+const TECHNICAL: &str = "Technical";
+const UNCOMMON_USE: &str = "Uncommon Use";
+const LIMITED_USE: &str = "Limited Use";
+const INCLUSION: &str = "Inclusion";
+const RECOMMENDED: &str = "Recommended";
+
+fn char_identifier_to_string(ident: IdentifierType) -> &'static str {
+    match ident {
+        IdentifierType::Not_Character => NOT_CHARACTER.into(),
+        IdentifierType::Deprecated => DEPRECATED.into(),
+        IdentifierType::Default_Ignorable => DEFAULT_IGNORABLE.into(),
+        IdentifierType::Not_NFKC => NOT_NFKC.into(),
+        IdentifierType::Not_XID => NOT_XID.into(),
+        IdentifierType::Exclusion => EXCLUSION.into(),
+        IdentifierType::Obsolete => OBSOLETE.into(),
+        IdentifierType::Technical => TECHNICAL.into(),
+        IdentifierType::Uncommon_Use => UNCOMMON_USE.into(),
+        IdentifierType::Limited_Use => LIMITED_USE.into(),
+        IdentifierType::Inclusion => INCLUSION.into(),
+        IdentifierType::Recommended => RECOMMENDED.into(),
+    }
+}
 
 /// TypeState state definitions
 pub mod string_states {
@@ -53,12 +87,26 @@ impl UnicodeString<string_states::RawInput> {
 
     /// Detect dangerous characters (only available on RawInput)
     pub fn detect_dangerous_chars(self) {
+        // TODO allow user selection of restriction level
         if self.text.check_restriction_level(ASCIIOnly) {
             eprintln!("String is safe");
             println!("{}", self.text);
             exit(0)
         } else {
             eprintln!("String has restricted characters!");
+            skeleton(&self.text).enumerate().for_each(|(i, c)| {
+                if !c.identifier_allowed() {
+                    eprintln!(
+                        "{} {}: {}: {}",
+                        i,
+                        // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
+                        deunicode(&c.to_string()),
+                        c.identifier_type()
+                            .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
+                        get_name(c as u32),
+                    );
+                }
+            });
             exit(2)
         }
     }
