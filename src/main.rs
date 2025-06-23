@@ -11,6 +11,7 @@ use std::fs::File;
 use std::io::{self, Read, Write};
 use std::marker::PhantomData;
 use std::process::exit;
+use unicode_general_category::{GeneralCategory, get_general_category};
 use unicode_security::{
     GeneralSecurityProfile, RestrictionLevel::ASCIIOnly, RestrictionLevelDetection,
     general_security_profile::IdentifierType, skeleton,
@@ -43,6 +44,42 @@ fn char_identifier_to_string(ident: IdentifierType) -> &'static str {
         IdentifierType::Limited_Use => LIMITED_USE.into(),
         IdentifierType::Inclusion => INCLUSION.into(),
         IdentifierType::Recommended => RECOMMENDED.into(),
+    }
+}
+
+fn general_category_to_string(cat: GeneralCategory) -> String {
+    match cat {
+        GeneralCategory::ClosePunctuation => "ClosePunctuation".into(),
+        GeneralCategory::ConnectorPunctuation => "ConnectorPunctuation".into(),
+        GeneralCategory::Control => "Control".into(),
+        GeneralCategory::CurrencySymbol => "CurrencySymbol".into(),
+        GeneralCategory::DashPunctuation => "DashPunctuation".into(),
+        GeneralCategory::DecimalNumber => "DecimalNumber".into(),
+        GeneralCategory::EnclosingMark => "EnclosingMark".into(),
+        GeneralCategory::FinalPunctuation => "FinalPunctuation".into(),
+        GeneralCategory::Format => "Format".into(),
+        GeneralCategory::InitialPunctuation => "InitialPunctuation".into(),
+        GeneralCategory::LetterNumber => "LetterNumber".into(),
+        GeneralCategory::LineSeparator => "LineSeparator".into(),
+        GeneralCategory::LowercaseLetter => "LowercaseLetter".into(),
+        GeneralCategory::MathSymbol => "MathSymbol".into(),
+        GeneralCategory::ModifierLetter => "ModifierLetter".into(),
+        GeneralCategory::ModifierSymbol => "ModifierSymbol".into(),
+        GeneralCategory::NonspacingMark => "NonspacingMark".into(),
+        GeneralCategory::OpenPunctuation => "OpenPunctuation".into(),
+        GeneralCategory::OtherLetter => "OtherLetter".into(),
+        GeneralCategory::OtherNumber => "OtherNumber".into(),
+        GeneralCategory::OtherPunctuation => "OtherPunctuation".into(),
+        GeneralCategory::OtherSymbol => "OtherSymbol".into(),
+        GeneralCategory::ParagraphSeparator => "ParagraphSeparator".into(),
+        GeneralCategory::PrivateUse => "PrivateUse".into(),
+        GeneralCategory::SpaceSeparator => "SpaceSeparator".into(),
+        GeneralCategory::SpacingMark => "SpacingMark".into(),
+        GeneralCategory::Surrogate => "Surrogate".into(),
+        GeneralCategory::TitlecaseLetter => "TitlecaseLetter".into(),
+        GeneralCategory::Unassigned => "Unassigned".into(),
+        GeneralCategory::UppercaseLetter => "UppercaseLetter".into(),
+        _ => "UnknownCategory".into(),
     }
 }
 
@@ -85,6 +122,19 @@ impl UnicodeString<string_states::RawInput> {
         }
     }
 
+    fn character_info(c: char) -> String {
+        format!(
+            "{}: ({} {}) {}",
+            // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
+            deunicode(&c.to_string()),
+            c.identifier_type().map_or("Unknown Character Type", |t| {
+                &char_identifier_to_string(t)
+            }),
+            general_category_to_string(get_general_category(c)),
+            get_name(c as u32),
+        )
+    }
+
     /// Detect dangerous characters (only available on RawInput)
     pub fn detect_dangerous_chars(self) {
         // TODO allow user selection of restriction level
@@ -94,16 +144,7 @@ impl UnicodeString<string_states::RawInput> {
                 .enumerate()
                 .flat_map(|(i, c)| {
                     if !(c.is_ascii_graphic() || c.is_ascii_whitespace()) {
-                        Some(format!(
-                            "{} {}: {}: {}",
-                            i,
-                            // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
-                            deunicode(&c.to_string()),
-                            c.identifier_type().map_or("Unknown Character Type", |t| {
-                                &char_identifier_to_string(t)
-                            }),
-                            get_name(c as u32),
-                        ))
+                        Some(format!("{} {}", i, Self::character_info(c)))
                     } else {
                         None
                     }
@@ -126,15 +167,7 @@ impl UnicodeString<string_states::RawInput> {
     /// Show character info (only available on RawInput)
     pub fn show_character_info(self) -> String {
         skeleton(&self.text).enumerate().for_each(|(i, c)| {
-            println!(
-                "{} {}: {}: {}",
-                i,
-                // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
-                deunicode(&c.to_string()),
-                c.identifier_type()
-                    .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
-                get_name(c as u32),
-            );
+            println!("{} {}", i, Self::character_info(c));
         });
         exit(2)
     }
