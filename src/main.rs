@@ -3,7 +3,7 @@ use arboard::Clipboard;
 use charname::get_name;
 use clap::Parser;
 use deunicode::deunicode;
-use eunicode::unicode_block_to_string;
+use eunicode::{unicode_block_to_string, unicode_script_to_string};
 use limace::Slugifier;
 use linkify::LinkFinder;
 use prettytable::{Cell as TableCell, Row, Table, format::consts::FORMAT_CLEAN, row};
@@ -131,6 +131,7 @@ impl UnicodeString<string_states::RawInput> {
             TableCell::new(&deunicode(&c.to_string())),
             TableCell::new(&general_category_to_string(c.category())),
             TableCell::new(&unicode_block_to_string(c.block())),
+            TableCell::new(&unicode_script_to_string(c.script())),
             TableCell::new(
                 c.identifier_type()
                     .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
@@ -146,6 +147,7 @@ impl UnicodeString<string_states::RawInput> {
             "Char",
             "Category",
             "Block",
+            "Script",
             "Identifier Type",
             "Name"
         ]);
