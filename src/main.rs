@@ -5,6 +5,7 @@ use clap::Parser;
 use deunicode::deunicode;
 use limace::Slugifier;
 use linkify::LinkFinder;
+use prettytable::{Cell as TableCell, Row, Table, format::consts::FORMAT_CLEAN, row};
 use rustrict::CensorStr;
 use std::collections::HashSet;
 use std::fs::File;
@@ -122,17 +123,24 @@ impl UnicodeString<string_states::RawInput> {
         }
     }
 
-    fn character_info(c: char) -> String {
-        format!(
-            "{}: ({} {}) {}",
+    fn character_info(c: char) -> Vec<TableCell> {
+        vec![
             // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
-            deunicode(&c.to_string()),
-            c.identifier_type().map_or("Unknown Character Type", |t| {
-                &char_identifier_to_string(t)
-            }),
-            general_category_to_string(get_general_category(c)),
-            get_name(c as u32),
-        )
+            TableCell::new(&deunicode(&c.to_string())),
+            TableCell::new(&general_category_to_string(get_general_category(c))),
+            TableCell::new(
+                c.identifier_type()
+                    .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
+            ),
+            TableCell::new(get_name(c as u32)),
+        ]
+    }
+
+    fn print_char_table(rows: Vec<Row>) {
+        let mut table = Table::init(rows);
+        table.set_titles(row!["Index", "Char", "Category", "Identifier Type", "Name"]);
+        table.set_format(*FORMAT_CLEAN);
+        table.printstd();
     }
 
     /// Detect dangerous characters (only available on RawInput)
@@ -144,7 +152,10 @@ impl UnicodeString<string_states::RawInput> {
                 .enumerate()
                 .flat_map(|(i, c)| {
                     if !(c.is_ascii_graphic() || c.is_ascii_whitespace()) {
-                        Some(format!("{} {}", i, Self::character_info(c)))
+                        let mut cells = Vec::with_capacity(5);
+                        cells.push(TableCell::new(&i.to_string()));
+                        cells.extend(Self::character_info(c));
+                        Some(Row::new(cells))
                     } else {
                         None
                     }
@@ -153,7 +164,8 @@ impl UnicodeString<string_states::RawInput> {
             // we'll only throw an error if we found non-graphic, non-whitespace characters beyond the ASCII range
             if char_names.len() > 0 {
                 eprintln!("String has restricted characters!");
-                char_names.iter().for_each(|line| eprintln!("{line}"));
+                Self::print_char_table(char_names);
+                // char_names.iter().for_each(|line| eprintln!("{line}"));
                 exit(2)
             }
         }
@@ -166,9 +178,17 @@ impl UnicodeString<string_states::RawInput> {
 
     /// Show character info (only available on RawInput)
     pub fn show_character_info(self) -> String {
-        skeleton(&self.text).enumerate().for_each(|(i, c)| {
-            println!("{} {}", i, Self::character_info(c));
-        });
+        let rows: Vec<Row> = skeleton(&self.text)
+            .enumerate()
+            .map(|(i, c)| {
+                let mut cells = Vec::with_capacity(5);
+                cells.push(TableCell::new(&i.to_string()));
+                cells.extend(Self::character_info(c));
+                Row::new(cells)
+                // println!("{} {}", i, Self::character_info(c));
+            })
+            .collect();
+        Self::print_char_table(rows);
         exit(2)
     }
 }
