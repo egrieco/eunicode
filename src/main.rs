@@ -3,7 +3,10 @@ use arboard::Clipboard;
 use charname::get_name;
 use clap::Parser;
 use deunicode::deunicode;
-use eunicode::{general_category_to_string, unicode_block_to_string, unicode_script_to_string};
+use eunicode::{
+    char_identifier_to_string, general_category_to_string, unicode_block_to_string,
+    unicode_script_to_string,
+};
 use limace::Slugifier;
 use linkify::LinkFinder;
 use prettytable::{Cell as TableCell, Row, Table, format::consts::FORMAT_CLEAN, row};
@@ -15,39 +18,8 @@ use std::marker::PhantomData;
 use std::process::exit;
 use ucd::Codepoint;
 use unicode_security::{
-    GeneralSecurityProfile, RestrictionLevel::ASCIIOnly, RestrictionLevelDetection,
-    general_security_profile::IdentifierType, skeleton,
+    GeneralSecurityProfile, RestrictionLevel::ASCIIOnly, RestrictionLevelDetection, skeleton,
 };
-
-const NOT_CHARACTER: &str = "Not Character";
-const DEPRECATED: &str = "Deprecated";
-const DEFAULT_IGNORABLE: &str = "Default Ignorable";
-const NOT_NFKC: &str = "Not NFKC";
-const NOT_XID: &str = "Not XID";
-const EXCLUSION: &str = "Exclusion";
-const OBSOLETE: &str = "Obsolete";
-const TECHNICAL: &str = "Technical";
-const UNCOMMON_USE: &str = "Uncommon Use";
-const LIMITED_USE: &str = "Limited Use";
-const INCLUSION: &str = "Inclusion";
-const RECOMMENDED: &str = "Recommended";
-
-fn char_identifier_to_string(ident: IdentifierType) -> &'static str {
-    match ident {
-        IdentifierType::Not_Character => NOT_CHARACTER.into(),
-        IdentifierType::Deprecated => DEPRECATED.into(),
-        IdentifierType::Default_Ignorable => DEFAULT_IGNORABLE.into(),
-        IdentifierType::Not_NFKC => NOT_NFKC.into(),
-        IdentifierType::Not_XID => NOT_XID.into(),
-        IdentifierType::Exclusion => EXCLUSION.into(),
-        IdentifierType::Obsolete => OBSOLETE.into(),
-        IdentifierType::Technical => TECHNICAL.into(),
-        IdentifierType::Uncommon_Use => UNCOMMON_USE.into(),
-        IdentifierType::Limited_Use => LIMITED_USE.into(),
-        IdentifierType::Inclusion => INCLUSION.into(),
-        IdentifierType::Recommended => RECOMMENDED.into(),
-    }
-}
 
 /// TypeState state definitions
 pub mod string_states {

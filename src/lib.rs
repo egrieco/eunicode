@@ -1,4 +1,22 @@
 use ucd::{Script, UnicodeBlock, UnicodeCategory};
+use unicode_security::general_security_profile::IdentifierType;
+
+pub fn char_identifier_to_string(ident: IdentifierType) -> &'static str {
+    match ident {
+        IdentifierType::Not_Character => "Not Character".into(),
+        IdentifierType::Deprecated => "Deprecated".into(),
+        IdentifierType::Default_Ignorable => "Default Ignorable".into(),
+        IdentifierType::Not_NFKC => "Not NFKC".into(),
+        IdentifierType::Not_XID => "Not XID".into(),
+        IdentifierType::Exclusion => "Exclusion".into(),
+        IdentifierType::Obsolete => "Obsolete".into(),
+        IdentifierType::Technical => "Technical".into(),
+        IdentifierType::Uncommon_Use => "Uncommon Use".into(),
+        IdentifierType::Limited_Use => "Limited Use".into(),
+        IdentifierType::Inclusion => "Inclusion".into(),
+        IdentifierType::Recommended => "Recommended".into(),
+    }
+}
 
 pub fn general_category_to_string(cat: UnicodeCategory) -> String {
     match cat {
