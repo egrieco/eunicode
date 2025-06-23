@@ -3,7 +3,7 @@ use arboard::Clipboard;
 use charname::get_name;
 use clap::Parser;
 use deunicode::deunicode;
-use eunicode::{unicode_block_to_string, unicode_script_to_string};
+use eunicode::{general_category_to_string, unicode_block_to_string, unicode_script_to_string};
 use limace::Slugifier;
 use linkify::LinkFinder;
 use prettytable::{Cell as TableCell, Row, Table, format::consts::FORMAT_CLEAN, row};
@@ -13,7 +13,7 @@ use std::fs::File;
 use std::io::{self, Read, Write};
 use std::marker::PhantomData;
 use std::process::exit;
-use ucd::{Codepoint, UnicodeBlock, UnicodeCategory};
+use ucd::Codepoint;
 use unicode_security::{
     GeneralSecurityProfile, RestrictionLevel::ASCIIOnly, RestrictionLevelDetection,
     general_security_profile::IdentifierType, skeleton,
@@ -46,41 +46,6 @@ fn char_identifier_to_string(ident: IdentifierType) -> &'static str {
         IdentifierType::Limited_Use => LIMITED_USE.into(),
         IdentifierType::Inclusion => INCLUSION.into(),
         IdentifierType::Recommended => RECOMMENDED.into(),
-    }
-}
-
-fn general_category_to_string(cat: UnicodeCategory) -> String {
-    match cat {
-        UnicodeCategory::ClosePunctuation => "ClosePunctuation".into(),
-        UnicodeCategory::ConnectorPunctuation => "ConnectorPunctuation".into(),
-        UnicodeCategory::Control => "Control".into(),
-        UnicodeCategory::CurrencySymbol => "CurrencySymbol".into(),
-        UnicodeCategory::DashPunctuation => "DashPunctuation".into(),
-        UnicodeCategory::DecimalNumber => "DecimalNumber".into(),
-        UnicodeCategory::EnclosingMark => "EnclosingMark".into(),
-        UnicodeCategory::FinalPunctuation => "FinalPunctuation".into(),
-        UnicodeCategory::Format => "Format".into(),
-        UnicodeCategory::InitialPunctuation => "InitialPunctuation".into(),
-        UnicodeCategory::LetterNumber => "LetterNumber".into(),
-        UnicodeCategory::LineSeparator => "LineSeparator".into(),
-        UnicodeCategory::LowercaseLetter => "LowercaseLetter".into(),
-        UnicodeCategory::MathSymbol => "MathSymbol".into(),
-        UnicodeCategory::ModifierLetter => "ModifierLetter".into(),
-        UnicodeCategory::ModifierSymbol => "ModifierSymbol".into(),
-        UnicodeCategory::NonspacingMark => "NonspacingMark".into(),
-        UnicodeCategory::OpenPunctuation => "OpenPunctuation".into(),
-        UnicodeCategory::OtherLetter => "OtherLetter".into(),
-        UnicodeCategory::OtherNumber => "OtherNumber".into(),
-        UnicodeCategory::OtherPunctuation => "OtherPunctuation".into(),
-        UnicodeCategory::OtherSymbol => "OtherSymbol".into(),
-        UnicodeCategory::ParagraphSeparator => "ParagraphSeparator".into(),
-        UnicodeCategory::PrivateUse => "PrivateUse".into(),
-        UnicodeCategory::SpaceSeparator => "SpaceSeparator".into(),
-        UnicodeCategory::SpacingMark => "SpacingMark".into(),
-        UnicodeCategory::Surrogate => "Surrogate".into(),
-        UnicodeCategory::TitlecaseLetter => "TitlecaseLetter".into(),
-        UnicodeCategory::Unassigned => "Unassigned".into(),
-        UnicodeCategory::UppercaseLetter => "UppercaseLetter".into(),
     }
 }
 
