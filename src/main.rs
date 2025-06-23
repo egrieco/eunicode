@@ -12,7 +12,7 @@ use std::fs::File;
 use std::io::{self, Read, Write};
 use std::marker::PhantomData;
 use std::process::exit;
-use unicode_general_category::{GeneralCategory, get_general_category};
+use ucd::{Codepoint, UnicodeCategory};
 use unicode_security::{
     GeneralSecurityProfile, RestrictionLevel::ASCIIOnly, RestrictionLevelDetection,
     general_security_profile::IdentifierType, skeleton,
@@ -48,39 +48,38 @@ fn char_identifier_to_string(ident: IdentifierType) -> &'static str {
     }
 }
 
-fn general_category_to_string(cat: GeneralCategory) -> String {
+fn general_category_to_string(cat: UnicodeCategory) -> String {
     match cat {
-        GeneralCategory::ClosePunctuation => "ClosePunctuation".into(),
-        GeneralCategory::ConnectorPunctuation => "ConnectorPunctuation".into(),
-        GeneralCategory::Control => "Control".into(),
-        GeneralCategory::CurrencySymbol => "CurrencySymbol".into(),
-        GeneralCategory::DashPunctuation => "DashPunctuation".into(),
-        GeneralCategory::DecimalNumber => "DecimalNumber".into(),
-        GeneralCategory::EnclosingMark => "EnclosingMark".into(),
-        GeneralCategory::FinalPunctuation => "FinalPunctuation".into(),
-        GeneralCategory::Format => "Format".into(),
-        GeneralCategory::InitialPunctuation => "InitialPunctuation".into(),
-        GeneralCategory::LetterNumber => "LetterNumber".into(),
-        GeneralCategory::LineSeparator => "LineSeparator".into(),
-        GeneralCategory::LowercaseLetter => "LowercaseLetter".into(),
-        GeneralCategory::MathSymbol => "MathSymbol".into(),
-        GeneralCategory::ModifierLetter => "ModifierLetter".into(),
-        GeneralCategory::ModifierSymbol => "ModifierSymbol".into(),
-        GeneralCategory::NonspacingMark => "NonspacingMark".into(),
-        GeneralCategory::OpenPunctuation => "OpenPunctuation".into(),
-        GeneralCategory::OtherLetter => "OtherLetter".into(),
-        GeneralCategory::OtherNumber => "OtherNumber".into(),
-        GeneralCategory::OtherPunctuation => "OtherPunctuation".into(),
-        GeneralCategory::OtherSymbol => "OtherSymbol".into(),
-        GeneralCategory::ParagraphSeparator => "ParagraphSeparator".into(),
-        GeneralCategory::PrivateUse => "PrivateUse".into(),
-        GeneralCategory::SpaceSeparator => "SpaceSeparator".into(),
-        GeneralCategory::SpacingMark => "SpacingMark".into(),
-        GeneralCategory::Surrogate => "Surrogate".into(),
-        GeneralCategory::TitlecaseLetter => "TitlecaseLetter".into(),
-        GeneralCategory::Unassigned => "Unassigned".into(),
-        GeneralCategory::UppercaseLetter => "UppercaseLetter".into(),
-        _ => "UnknownCategory".into(),
+        UnicodeCategory::ClosePunctuation => "ClosePunctuation".into(),
+        UnicodeCategory::ConnectorPunctuation => "ConnectorPunctuation".into(),
+        UnicodeCategory::Control => "Control".into(),
+        UnicodeCategory::CurrencySymbol => "CurrencySymbol".into(),
+        UnicodeCategory::DashPunctuation => "DashPunctuation".into(),
+        UnicodeCategory::DecimalNumber => "DecimalNumber".into(),
+        UnicodeCategory::EnclosingMark => "EnclosingMark".into(),
+        UnicodeCategory::FinalPunctuation => "FinalPunctuation".into(),
+        UnicodeCategory::Format => "Format".into(),
+        UnicodeCategory::InitialPunctuation => "InitialPunctuation".into(),
+        UnicodeCategory::LetterNumber => "LetterNumber".into(),
+        UnicodeCategory::LineSeparator => "LineSeparator".into(),
+        UnicodeCategory::LowercaseLetter => "LowercaseLetter".into(),
+        UnicodeCategory::MathSymbol => "MathSymbol".into(),
+        UnicodeCategory::ModifierLetter => "ModifierLetter".into(),
+        UnicodeCategory::ModifierSymbol => "ModifierSymbol".into(),
+        UnicodeCategory::NonspacingMark => "NonspacingMark".into(),
+        UnicodeCategory::OpenPunctuation => "OpenPunctuation".into(),
+        UnicodeCategory::OtherLetter => "OtherLetter".into(),
+        UnicodeCategory::OtherNumber => "OtherNumber".into(),
+        UnicodeCategory::OtherPunctuation => "OtherPunctuation".into(),
+        UnicodeCategory::OtherSymbol => "OtherSymbol".into(),
+        UnicodeCategory::ParagraphSeparator => "ParagraphSeparator".into(),
+        UnicodeCategory::PrivateUse => "PrivateUse".into(),
+        UnicodeCategory::SpaceSeparator => "SpaceSeparator".into(),
+        UnicodeCategory::SpacingMark => "SpacingMark".into(),
+        UnicodeCategory::Surrogate => "Surrogate".into(),
+        UnicodeCategory::TitlecaseLetter => "TitlecaseLetter".into(),
+        UnicodeCategory::Unassigned => "Unassigned".into(),
+        UnicodeCategory::UppercaseLetter => "UppercaseLetter".into(),
     }
 }
 
@@ -129,7 +128,7 @@ impl UnicodeString<string_states::RawInput> {
             // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
             // TODO might want to print all "safe" printable characters to allow better analysis
             TableCell::new(&deunicode(&c.to_string())),
-            TableCell::new(&general_category_to_string(get_general_category(c))),
+            TableCell::new(&general_category_to_string(c.category())),
             TableCell::new(
                 c.identifier_type()
                     .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
