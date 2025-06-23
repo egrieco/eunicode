@@ -12,7 +12,7 @@ use std::fs::File;
 use std::io::{self, Read, Write};
 use std::marker::PhantomData;
 use std::process::exit;
-use ucd::{Codepoint, UnicodeCategory};
+use ucd::{Codepoint, UnicodeBlock, UnicodeCategory};
 use unicode_security::{
     GeneralSecurityProfile, RestrictionLevel::ASCIIOnly, RestrictionLevelDetection,
     general_security_profile::IdentifierType, skeleton,
@@ -83,6 +83,13 @@ fn general_category_to_string(cat: UnicodeCategory) -> String {
     }
 }
 
+fn unicode_block_to_string(block: Option<UnicodeBlock>) -> String {
+    match block {
+        Some(block) => match block {},
+        None => todo!(),
+    }
+}
+
 /// TypeState state definitions
 pub mod string_states {
     use super::StringState;
@@ -129,6 +136,7 @@ impl UnicodeString<string_states::RawInput> {
             // TODO might want to print all "safe" printable characters to allow better analysis
             TableCell::new(&deunicode(&c.to_string())),
             TableCell::new(&general_category_to_string(c.category())),
+            TableCell::new(c.block()),
             TableCell::new(
                 c.identifier_type()
                     .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
@@ -139,7 +147,14 @@ impl UnicodeString<string_states::RawInput> {
 
     fn print_char_table(rows: Vec<Row>) {
         let mut table = Table::init(rows);
-        table.set_titles(row!["Index", "Char", "Category", "Identifier Type", "Name"]);
+        table.set_titles(row![
+            "Index",
+            "Char",
+            "Category",
+            "Block",
+            "Identifier Type",
+            "Name"
+        ]);
         table.set_format(*FORMAT_CLEAN);
         table.printstd();
     }
