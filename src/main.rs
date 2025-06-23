@@ -84,7 +84,6 @@ fn general_category_to_string(cat: UnicodeCategory) -> String {
     }
 }
 
-
 /// TypeState state definitions
 pub mod string_states {
     use super::StringState;
@@ -131,7 +130,7 @@ impl UnicodeString<string_states::RawInput> {
             // TODO might want to print all "safe" printable characters to allow better analysis
             TableCell::new(&deunicode(&c.to_string())),
             TableCell::new(&general_category_to_string(c.category())),
-            TableCell::new(c.block()),
+            TableCell::new(&unicode_block_to_string(c.block())),
             TableCell::new(
                 c.identifier_type()
                     .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
