@@ -3,6 +3,7 @@ use arboard::Clipboard;
 use charname::get_name;
 use clap::Parser;
 use deunicode::deunicode;
+use eunicode::unicode_block_to_string;
 use limace::Slugifier;
 use linkify::LinkFinder;
 use prettytable::{Cell as TableCell, Row, Table, format::consts::FORMAT_CLEAN, row};
@@ -83,12 +84,6 @@ fn general_category_to_string(cat: UnicodeCategory) -> String {
     }
 }
 
-fn unicode_block_to_string(block: Option<UnicodeBlock>) -> String {
-    match block {
-        Some(block) => match block {},
-        None => todo!(),
-    }
-}
 
 /// TypeState state definitions
 pub mod string_states {
