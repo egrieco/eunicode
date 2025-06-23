@@ -18,7 +18,7 @@ pub fn char_identifier_to_string(ident: IdentifierType) -> &'static str {
     }
 }
 
-pub fn general_category_to_string(cat: UnicodeCategory) -> String {
+pub fn general_category_to_string(cat: UnicodeCategory) -> &'static str {
     match cat {
         UnicodeCategory::ClosePunctuation => "ClosePunctuation".into(),
         UnicodeCategory::ConnectorPunctuation => "ConnectorPunctuation".into(),
@@ -53,7 +53,7 @@ pub fn general_category_to_string(cat: UnicodeCategory) -> String {
     }
 }
 
-pub fn unicode_block_to_string(block: Option<UnicodeBlock>) -> String {
+pub fn unicode_block_to_string(block: Option<UnicodeBlock>) -> &'static str {
     match block {
         Some(block) => match block {
             UnicodeBlock::BasicLatin => "BasicLatin".into(),
@@ -364,7 +364,7 @@ pub fn unicode_block_to_string(block: Option<UnicodeBlock>) -> String {
     }
 }
 
-pub fn unicode_script_to_string(script: Option<Script>) -> String {
+pub fn unicode_script_to_string(script: Option<Script>) -> &'static str {
     match script {
         Some(script) => match script {
             Script::Adlam => "Adlam".into(),
