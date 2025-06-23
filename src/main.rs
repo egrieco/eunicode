@@ -123,9 +123,11 @@ impl UnicodeString<string_states::RawInput> {
         }
     }
 
-    fn character_info(c: char) -> Vec<TableCell> {
-        vec![
+    fn character_info(index: &usize, c: char) -> Row {
+        Row::new(vec![
+            TableCell::new(&index.to_string()),
             // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
+            // TODO might want to print all "safe" printable characters to allow better analysis
             TableCell::new(&deunicode(&c.to_string())),
             TableCell::new(&general_category_to_string(get_general_category(c))),
             TableCell::new(
@@ -133,7 +135,7 @@ impl UnicodeString<string_states::RawInput> {
                     .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
             ),
             TableCell::new(get_name(c as u32)),
-        ]
+        ])
     }
 
     fn print_char_table(rows: Vec<Row>) {
@@ -152,10 +154,7 @@ impl UnicodeString<string_states::RawInput> {
                 .enumerate()
                 .flat_map(|(i, c)| {
                     if !(c.is_ascii_graphic() || c.is_ascii_whitespace()) {
-                        let mut cells = Vec::with_capacity(5);
-                        cells.push(TableCell::new(&i.to_string()));
-                        cells.extend(Self::character_info(c));
-                        Some(Row::new(cells))
+                        Some(Self::character_info(&i, c))
                     } else {
                         None
                     }
@@ -165,7 +164,6 @@ impl UnicodeString<string_states::RawInput> {
             if char_names.len() > 0 {
                 eprintln!("String has restricted characters!");
                 Self::print_char_table(char_names);
-                // char_names.iter().for_each(|line| eprintln!("{line}"));
                 exit(2)
             }
         }
@@ -180,13 +178,7 @@ impl UnicodeString<string_states::RawInput> {
     pub fn show_character_info(self) -> String {
         let rows: Vec<Row> = skeleton(&self.text)
             .enumerate()
-            .map(|(i, c)| {
-                let mut cells = Vec::with_capacity(5);
-                cells.push(TableCell::new(&i.to_string()));
-                cells.extend(Self::character_info(c));
-                Row::new(cells)
-                // println!("{} {}", i, Self::character_info(c));
-            })
+            .map(|(i, c)| Self::character_info(&i, c))
             .collect();
         Self::print_char_table(rows);
         exit(2)
