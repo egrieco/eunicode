@@ -5,11 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.1 (2025-06-23)
+
+### New Features
+
+ - <csr-id-4df90f3b40868cce888230a9560bac4bece1bdad/> Add Unicode script
+ - <csr-id-ba52a3dd47ba2d04f07b709db9322d11f0364f71/> Add Unicode block
+ - <csr-id-441173a5fd86509444e6ffca5ac6cf9dc6b56f80/> add unicode block display to character analysis table
+ - <csr-id-cf4ad8dfe520c457c25c8ddeda7d2c60c9a610f9/> Add table based layout
+ - <csr-id-788a18695ef7686601e0dec18c6c767267591d62/> Add unicode UCD category
+   Also dry out some of the info code.
+
+### Refactor
+
+ - <csr-id-ababa478bd90223fdf6fa9e2f43fcfd11eeb3109/> Improve return types
+ - <csr-id-5e2117cb7e1527143fb7f80cec8d7176a02bfe19/> Move type conversion to lib
+ - <csr-id-d3c9daed2e2ef6bbbe292464fd456d7e491666f2/> Move category conversion to lib
+ - <csr-id-e75258242d21ce8dd41ab310b1bae718fd05a71a/> move `unicode_block_to_string` function to `lib.rs`
+ - <csr-id-0651576cb720f0b77aab79038bcede217247d6c7/> Switch to UCD crate
+ - <csr-id-ed7457e64be109afd0adce4ac8e6d13b01fc7d77/> Improve efficiency of row creation
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 11 commits contributed to the release.
+ - 11 days passed between releases.
+ - 11 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Improve return types ([`ababa47`](https://github.com/egrieco/eunicode/commit/ababa478bd90223fdf6fa9e2f43fcfd11eeb3109))
+    - Move type conversion to lib ([`5e2117c`](https://github.com/egrieco/eunicode/commit/5e2117cb7e1527143fb7f80cec8d7176a02bfe19))
+    - Move category conversion to lib ([`d3c9dae`](https://github.com/egrieco/eunicode/commit/d3c9daed2e2ef6bbbe292464fd456d7e491666f2))
+    - Add Unicode script ([`4df90f3`](https://github.com/egrieco/eunicode/commit/4df90f3b40868cce888230a9560bac4bece1bdad))
+    - Add Unicode block ([`ba52a3d`](https://github.com/egrieco/eunicode/commit/ba52a3dd47ba2d04f07b709db9322d11f0364f71))
+    - Move `unicode_block_to_string` function to `lib.rs` ([`e752582`](https://github.com/egrieco/eunicode/commit/e75258242d21ce8dd41ab310b1bae718fd05a71a))
+    - Add unicode block display to character analysis table ([`441173a`](https://github.com/egrieco/eunicode/commit/441173a5fd86509444e6ffca5ac6cf9dc6b56f80))
+    - Switch to UCD crate ([`0651576`](https://github.com/egrieco/eunicode/commit/0651576cb720f0b77aab79038bcede217247d6c7))
+    - Improve efficiency of row creation ([`ed7457e`](https://github.com/egrieco/eunicode/commit/ed7457e64be109afd0adce4ac8e6d13b01fc7d77))
+    - Add table based layout ([`cf4ad8d`](https://github.com/egrieco/eunicode/commit/cf4ad8dfe520c457c25c8ddeda7d2c60c9a610f9))
+    - Add unicode UCD category ([`788a186`](https://github.com/egrieco/eunicode/commit/788a18695ef7686601e0dec18c6c767267591d62))
+</details>
+
 ## v0.1.0 (2025-06-11)
 
 <csr-id-f811a245a70c313fdd10d685f993c6d7d89a4272/>
 <csr-id-0a3c60df9e0e49c7be124074bc1e485c1775bc16/>
 <csr-id-b3558d21e059c4f4af36966164aaa9807a1519a9/>
+<csr-id-b7bbe970e39ad095c5af16f4a32aceb173cdaa57/>
 
 ### Chore
 
@@ -57,7 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 25 commits contributed to the release over the course of 1 calendar day.
+ - 26 commits contributed to the release over the course of 1 calendar day.
  - 19 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -68,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release eunicode v0.1.0 ([`20f4346`](https://github.com/egrieco/eunicode/commit/20f4346da10ddec2d48432c42eacc5d9b5aabead))
     - Remove excess keywords ([`b7bbe97`](https://github.com/egrieco/eunicode/commit/b7bbe970e39ad095c5af16f4a32aceb173cdaa57))
     - Release eunicode v0.1.0 ([`7f52da4`](https://github.com/egrieco/eunicode/commit/7f52da45218edf3ce8713089e0f906afafbe52e3))
     - Add changelog ([`b3558d2`](https://github.com/egrieco/eunicode/commit/b3558d21e059c4f4af36966164aaa9807a1519a9))
