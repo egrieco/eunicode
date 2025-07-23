@@ -5,7 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.2 (2025-07-23)
+
+### New Features
+
+ - <csr-id-fc8380a162274a187fb04dbffd8b183256a32838/> add proper SGR CSI code rendering for `--keep-colors` flag
+ - <csr-id-0e0ac7e207e004834845b5d2ce49b4b154dd7a73/> Add raw bytes and ANSI escape parsing
+
+### Bug Fixes
+
+ - <csr-id-0aee7345c2ef978a4de1180d8368bb9151457359/> Fix code from aider
+   There was an extra "m" character that should not have been there.
+   Also, let's use the constant from termwiz rather than hard coding the value.
+ - <csr-id-0604fd298fa3ccd209111de03e02ef7748849a63/> Auto-fix clippy lints
+
+### Other
+
+ - <csr-id-f280e6ef0ee916a72d04ab69f4fc6b1aed2ef7c9/> Add nix shell and rust toolchain
+
+### Refactor
+
+ - <csr-id-ee51c1d930cbdbafe2026ca129785a4882fd59b7/> Reorganize bin and lib
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 7 commits contributed to the release over the course of 2 calendar days.
+ - 29 days passed between releases.
+ - 6 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Add design documents ([`7c5a64c`](https://github.com/egrieco/eunicode/commit/7c5a64c9435e5b8da82d895ce4f5296123fd465f))
+    - Fix code from aider ([`0aee734`](https://github.com/egrieco/eunicode/commit/0aee7345c2ef978a4de1180d8368bb9151457359))
+    - Add proper SGR CSI code rendering for `--keep-colors` flag ([`fc8380a`](https://github.com/egrieco/eunicode/commit/fc8380a162274a187fb04dbffd8b183256a32838))
+    - Add raw bytes and ANSI escape parsing ([`0e0ac7e`](https://github.com/egrieco/eunicode/commit/0e0ac7e207e004834845b5d2ce49b4b154dd7a73))
+    - Auto-fix clippy lints ([`0604fd2`](https://github.com/egrieco/eunicode/commit/0604fd298fa3ccd209111de03e02ef7748849a63))
+    - Reorganize bin and lib ([`ee51c1d`](https://github.com/egrieco/eunicode/commit/ee51c1d930cbdbafe2026ca129785a4882fd59b7))
+    - Add nix shell and rust toolchain ([`f280e6e`](https://github.com/egrieco/eunicode/commit/f280e6ef0ee916a72d04ab69f4fc6b1aed2ef7c9))
+</details>
+
 ## v0.1.1 (2025-06-23)
+
+<csr-id-ababa478bd90223fdf6fa9e2f43fcfd11eeb3109/>
+<csr-id-5e2117cb7e1527143fb7f80cec8d7176a02bfe19/>
+<csr-id-d3c9daed2e2ef6bbbe292464fd456d7e491666f2/>
+<csr-id-e75258242d21ce8dd41ab310b1bae718fd05a71a/>
+<csr-id-0651576cb720f0b77aab79038bcede217247d6c7/>
+<csr-id-ed7457e64be109afd0adce4ac8e6d13b01fc7d77/>
 
 ### New Features
 
@@ -29,7 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 11 commits contributed to the release.
+ - 12 commits contributed to the release.
  - 11 days passed between releases.
  - 11 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -41,6 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release eunicode v0.1.1 ([`864978e`](https://github.com/egrieco/eunicode/commit/864978e362244c0d48b83f14a74b0bc29264a042))
     - Improve return types ([`ababa47`](https://github.com/egrieco/eunicode/commit/ababa478bd90223fdf6fa9e2f43fcfd11eeb3109))
     - Move type conversion to lib ([`5e2117c`](https://github.com/egrieco/eunicode/commit/5e2117cb7e1527143fb7f80cec8d7176a02bfe19))
     - Move category conversion to lib ([`d3c9dae`](https://github.com/egrieco/eunicode/commit/d3c9daed2e2ef6bbbe292464fd456d7e491666f2))
