@@ -69,7 +69,7 @@ impl RawBytes {
                 Action::CSI(csi) => match csi {
                     CSI::Sgr(sgr) => {
                         if keep_colors {
-                            output.push_str(&sgr.to_string())
+                            output.push_str(&format!("\x1b[{}m", sgr.to_string()))
                         }
                     }
                     // CSI::Cursor(cursor) => todo!(),
