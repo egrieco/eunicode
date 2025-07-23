@@ -9,6 +9,10 @@ impl RawBytes {
         RawBytes(vec![])
     }
 
+    pub fn from_bytes(bytes: Vec<u8>) -> RawBytes {
+        RawBytes(bytes)
+    }
+
     pub fn from_string(string: &str) -> RawBytes {
         RawBytes(string.as_bytes().to_vec())
     }
