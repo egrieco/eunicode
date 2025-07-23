@@ -5,7 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.3 (2025-07-23)
+
+### New Features
+
+ - <csr-id-8f5111fb05df5ffa433129ccfdedacbf5bd8f69e/> Add from_bytes to RawBytes
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 1 commit contributed to the release.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Add from_bytes to RawBytes ([`8f5111f`](https://github.com/egrieco/eunicode/commit/8f5111fb05df5ffa433129ccfdedacbf5bd8f69e))
+</details>
+
 ## v0.1.2 (2025-07-23)
+
+<csr-id-f280e6ef0ee916a72d04ab69f4fc6b1aed2ef7c9/>
+<csr-id-ee51c1d930cbdbafe2026ca129785a4882fd59b7/>
 
 ### New Features
 
@@ -31,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 7 commits contributed to the release over the course of 2 calendar days.
+ - 8 commits contributed to the release over the course of 2 calendar days.
  - 29 days passed between releases.
  - 6 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -43,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release eunicode v0.1.2 ([`676acb2`](https://github.com/egrieco/eunicode/commit/676acb29bb09b879d9da816fe3993b6fb645188c))
     - Add design documents ([`7c5a64c`](https://github.com/egrieco/eunicode/commit/7c5a64c9435e5b8da82d895ce4f5296123fd465f))
     - Fix code from aider ([`0aee734`](https://github.com/egrieco/eunicode/commit/0aee7345c2ef978a4de1180d8368bb9151457359))
     - Add proper SGR CSI code rendering for `--keep-colors` flag ([`fc8380a`](https://github.com/egrieco/eunicode/commit/fc8380a162274a187fb04dbffd8b183256a32838))
