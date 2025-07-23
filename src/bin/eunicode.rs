@@ -1,5 +1,6 @@
 use arboard::Clipboard;
 use clap::Parser;
+use eunicode::raw_bytes::RawBytes;
 use eunicode::unicode_string::UnicodeString;
 use std::{
     fs::File,
@@ -48,6 +49,10 @@ struct Args {
     #[arg(long)]
     slugify: bool,
 
+    /// Keep CSI SGR codes to allow text formatting in the terminal
+    #[arg(long)]
+    keep_colors: bool,
+
     /// Detect dangerous characters in the input
     #[arg(long)]
     detect: bool,
@@ -60,8 +65,29 @@ struct Args {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
+    let mut input_text = String::default();
+
+    // Check if stdin has data (not a TTY and has content)
+    if !atty::is(atty::Stream::Stdin) {
+        let mut buffer = RawBytes::default();
+        io::stdin().read_to_end(&mut buffer.0)?;
+        if !buffer.is_empty() {
+            input_text = buffer.strip_ansi_escapes(args.keep_colors);
+        }
+    }
+
+    // Use CLI arguments if provided
+    if input_text.is_empty() && !args.input.is_empty() {
+        input_text = args.input.join(" ");
+    };
+
     // Get input text and wrap in RawInput state
-    let input_text = get_input_text(&args)?;
+    if input_text.is_empty() {
+        // Fall back to clipboard
+        let mut clipboard = Clipboard::new()?;
+        input_text =
+            RawBytes::from_string(&clipboard.get_text()?).strip_ansi_escapes(args.keep_colors);
+    };
     let raw_input = UnicodeString::new(input_text);
 
     // Handle operations that require RawInput state first
@@ -97,28 +123,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     Ok(())
-}
-
-/// Get input text from stdin, CLI args, or clipboard in that order of preference
-fn get_input_text(args: &Args) -> Result<String, Box<dyn std::error::Error>> {
-    // Check if stdin has data (not a TTY and has content)
-    if !atty::is(atty::Stream::Stdin) {
-        let mut buffer = String::new();
-        io::stdin().read_to_string(&mut buffer)?;
-        if !buffer.is_empty() {
-            return Ok(buffer);
-        }
-    }
-
-    // Use CLI arguments if provided
-    if !args.input.is_empty() {
-        return Ok(args.input.join(" "));
-    }
-
-    // Fall back to clipboard
-    let mut clipboard = Clipboard::new()?;
-    let clipboard_text = clipboard.get_text()?;
-    Ok(clipboard_text)
 }
 
 /// Write output to appropriate destinations based on args

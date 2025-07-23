@@ -46,6 +46,10 @@ impl UnicodeString<string_states::RawInput> {
         }
     }
 
+    pub fn to_string(&self) -> &str {
+        &self.text
+    }
+
     /// Normalize Unicode characters to only safe, ASCII text chars and transition to CleanedText state
     pub fn clean(self) -> UnicodeString<string_states::CleanedText> {
         UnicodeString::<string_states::CleanedText> {
