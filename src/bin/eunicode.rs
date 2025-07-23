@@ -138,11 +138,11 @@ fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error
 
         // Only write to stdout if it's redirected when clipboard flag is used
         if stdout_is_redirected {
-            print!("{}", text);
+            print!("{text}");
         }
     } else {
         // Normal stdout output when clipboard flag is not used
-        print!("{}", text);
+        print!("{text}");
     }
 
     Ok(())

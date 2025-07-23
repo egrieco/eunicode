@@ -60,12 +60,12 @@ impl UnicodeString<string_states::RawInput> {
             // NOTE: we're calling deunicode here to avoid printing potentially dangerous characters
             // TODO might want to print all "safe" printable characters to allow better analysis
             TableCell::new(&deunicode(&c.to_string())),
-            TableCell::new(&general_category_to_string(c.category())),
-            TableCell::new(&unicode_block_to_string(c.block())),
-            TableCell::new(&unicode_script_to_string(c.script())),
+            TableCell::new(general_category_to_string(c.category())),
+            TableCell::new(unicode_block_to_string(c.block())),
+            TableCell::new(unicode_script_to_string(c.script())),
             TableCell::new(
                 c.identifier_type()
-                    .map_or("Unknown Character Type", |t| &char_identifier_to_string(t)),
+                    .map_or("Unknown Character Type", |t| char_identifier_to_string(t)),
             ),
             TableCell::new(get_name(c as u32)),
         ])
@@ -102,7 +102,7 @@ impl UnicodeString<string_states::RawInput> {
                 })
                 .collect();
             // we'll only throw an error if we found non-graphic, non-whitespace characters beyond the ASCII range
-            if char_names.len() > 0 {
+            if !char_names.is_empty() {
                 eprintln!("String has restricted characters!");
                 Self::print_char_table(char_names);
                 exit(2)
