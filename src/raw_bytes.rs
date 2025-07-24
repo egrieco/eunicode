@@ -23,13 +23,13 @@ impl RawBytes {
 
     pub fn strip_ansi_escapes(&self, keep_colors: bool) -> String {
         let mut escape_parser = Parser::new();
-        let mut output = String::default();
+        let mut output: Vec<Action> = Default::default();
 
         for action in Parser::parse_as_vec(&mut escape_parser, &self.0) {
-            match action {
+            let append_action = match action {
                 // collect actual chars
-                Action::Print(char) => output.push(char),
-                Action::PrintString(string) => output.push_str(&string),
+                Action::Print(_char) => true,
+                Action::PrintString(ref _string) => true,
 
                 // collect linefeeds and such
                 Action::Control(control_code) => match control_code {
@@ -42,11 +42,11 @@ impl RawBytes {
                     // ControlCode::Acknowledge => todo!(),
                     // ControlCode::Bell => todo!(),
                     // ControlCode::Backspace => output.push(""),
-                    ControlCode::HorizontalTab => output.push('\t'),
-                    ControlCode::LineFeed => output.push('\n'),
+                    ControlCode::HorizontalTab => true,
+                    ControlCode::LineFeed => true,
                     // ControlCode::VerticalTab => todo!(),
                     // ControlCode::FormFeed => output.push(""),
-                    ControlCode::CarriageReturn => output.push('\r'),
+                    ControlCode::CarriageReturn => true,
                     // ControlCode::ShiftOut => todo!(),
                     // ControlCode::ShiftIn => todo!(),
                     // ControlCode::DataLinkEscape => todo!(),
@@ -65,17 +65,13 @@ impl RawBytes {
                     // ControlCode::GroupSeparator => todo!(),
                     // ControlCode::RecordSeparator => todo!(),
                     // ControlCode::UnitSeparator => todo!(),
-                    _ => {}
+                    _ => false,
                 },
                 // Action::Esc(esc) => todo!(),
 
                 // pass through CSI SGR codes to change how text is rendered
-                Action::CSI(csi) => match csi {
-                    CSI::Sgr(sgr) => {
-                        if keep_colors {
-                            output.push_str(&format!("{}{}", termwiz::input::CSI, sgr.to_string()))
-                        }
-                    }
+                Action::CSI(ref csi) => match csi {
+                    CSI::Sgr(_sgr) => keep_colors,
                     // CSI::Cursor(cursor) => todo!(),
                     // CSI::Edit(edit) => todo!(),
                     // CSI::Mode(mode) => todo!(),
@@ -85,7 +81,7 @@ impl RawBytes {
                     // CSI::Keyboard(keyboard) => todo!(),
                     // CSI::SelectCharacterPath(character_path, _) => todo!(),
                     // CSI::Unspecified(unspecified) => todo!(),
-                    _ => {}
+                    _ => false,
                 },
 
                 // skip device control codes and OSC
@@ -97,10 +93,14 @@ impl RawBytes {
                 // TODO allow graphics rendering?
                 // Action::Sixel(sixel) => todo!(),
                 // Action::KittyImage(kitty_image) => todo!(),
-                _ => {}
+                _ => false,
+            };
+
+            if append_action {
+                action.append_to(&mut output)
             }
         }
 
-        output
+        output.iter().map(|a| a.to_string()).collect()
     }
 }
