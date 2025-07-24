@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v0.1.3 (2025-07-23)
+## v0.1.4 (2025-07-23)
 
-### New Features
+### Refactor
 
- - <csr-id-8f5111fb05df5ffa433129ccfdedacbf5bd8f69e/> Add from_bytes to RawBytes
+ - <csr-id-23c4095b30dbf2d171ccb4fa342d1c670cc62060/> Switch to Vec<Action>
+   Hopefully this fixes the issue with the terminal escapes getting incorrectly rendered when called as a library.
 
 ### Commit Statistics
 
@@ -26,6 +27,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Switch to Vec<Action> ([`23c4095`](https://github.com/egrieco/eunicode/commit/23c4095b30dbf2d171ccb4fa342d1c670cc62060))
+</details>
+
+## v0.1.3 (2025-07-23)
+
+### New Features
+
+ - <csr-id-8f5111fb05df5ffa433129ccfdedacbf5bd8f69e/> Add from_bytes to RawBytes
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 2 commits contributed to the release.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Release eunicode v0.1.3 ([`cd38461`](https://github.com/egrieco/eunicode/commit/cd384614d6457b60c97b0bdb4a5133d29ad4535f))
     - Add from_bytes to RawBytes ([`8f5111f`](https://github.com/egrieco/eunicode/commit/8f5111fb05df5ffa433129ccfdedacbf5bd8f69e))
 </details>
 
