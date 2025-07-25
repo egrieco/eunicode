@@ -60,6 +60,10 @@ struct Args {
     /// Show characters present in input, their names, and code points
     #[arg(long)]
     chars: bool,
+
+    /// Emit the raw bytes after ANSI stripping but without further cleaning (mostly useful for testing)
+    #[arg(long)]
+    raw_bytes: bool,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -88,6 +92,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         input_text =
             RawBytes::from_string(&clipboard.get_text()?).strip_ansi_escapes(args.keep_colors);
     };
+
+    if args.raw_bytes {
+        write_output(&args, &input_text)?;
+        return Ok(());
+    }
+
     let raw_input = UnicodeString::new(input_text);
 
     // Handle operations that require RawInput state first
