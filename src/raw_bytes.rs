@@ -41,11 +41,11 @@ impl RawBytes {
                     // ControlCode::Enquiry => todo!(),
                     // ControlCode::Acknowledge => todo!(),
                     // ControlCode::Bell => todo!(),
-                    // ControlCode::Backspace => output.push(""),
+                    ControlCode::Backspace => true,
                     ControlCode::HorizontalTab => true,
                     ControlCode::LineFeed => true,
-                    // ControlCode::VerticalTab => todo!(),
-                    // ControlCode::FormFeed => output.push(""),
+                    ControlCode::VerticalTab => true,
+                    ControlCode::FormFeed => true,
                     ControlCode::CarriageReturn => true,
                     // ControlCode::ShiftOut => todo!(),
                     // ControlCode::ShiftIn => todo!(),
@@ -73,7 +73,7 @@ impl RawBytes {
                 Action::CSI(ref csi) => match csi {
                     CSI::Sgr(_sgr) => keep_colors,
                     // CSI::Cursor(cursor) => todo!(),
-                    // CSI::Edit(edit) => todo!(),
+                    // CSI::Edit(edit) => true,
                     // CSI::Mode(mode) => todo!(),
                     // CSI::Device(device) => todo!(),
                     // CSI::Mouse(mouse_report) => todo!(),
@@ -88,7 +88,7 @@ impl RawBytes {
                 // Action::DeviceControl(device_control_mode) => todo!(),
                 // Action::OperatingSystemCommand(operating_system_command) => todo!(),
                 // don't allow programs to get terminal info
-                // Action::XtGetTcap(items) => todo!(),
+                // Action::XtGetTcap(ref _items) => true,
 
                 // TODO allow graphics rendering?
                 // Action::Sixel(sixel) => todo!(),
