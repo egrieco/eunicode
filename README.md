@@ -53,3 +53,7 @@ Also, from _eunuch_
 - **clean** is overly aggressive and emits only ASCII text. We probably need to allow different levels of cleaning.
 - **strip** removes all html tags. We might want to allow for some exceptions.
 - **censor** uses the [rustrict](https://github.com/finnbear/rustrict/) library, so it will not censor words that rustrict misses. This can be tested via the [swear-words](https://github.com/chucknorris-io/swear-words) repo with the command `eunicode --censor < ~/Repos/swear-words/en` or similarly with other lists of profanity.
+
+## Unicode Standard References
+
+[RFC 9839 and Bad Unicode by Tim Bray](https://www.tbray.org/ongoing/When/202x/2025/08/14/RFC9839)
