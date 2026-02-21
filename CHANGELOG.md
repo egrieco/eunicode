@@ -5,7 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.5 (2026-02-20)
+
+### Chore
+
+ - <csr-id-72be97c7fc666d6e72069635203af0581c64c9f5/> Update incompatible deps
+   This addresses a security issue in ammonia:
+   RUSTSEC-2025-0071: Incorrect handling of embedded SVG and MathML leads to mutation XSS after removal
+   https://rustsec.org/advisories/RUSTSEC-2025-0071.html
+
+### Documentation
+
+ - <csr-id-9d2dc2b1e16e40c3a764fbccc360de6fbca3a733/> Add features section
+
+### New Features
+
+ - <csr-id-0b5e0d60b339c58d0bc41186cf31355985ea342e/> Add the --raw-bytes flag
+
+### Refactor
+
+ - <csr-id-b3a57935785c9bd3331a3551a79db928574ccf95/> replace atty crate with std::io::IsTerminal
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 7 commits contributed to the release over the course of 210 calendar days.
+ - 211 days passed between releases.
+ - 4 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Update Cargo.lock ([`473293b`](https://github.com/egrieco/eunicode/commit/473293b5648b09de68185d6a0efa97531d2ee13c))
+    - Replace atty crate with std::io::IsTerminal ([`b3a5793`](https://github.com/egrieco/eunicode/commit/b3a57935785c9bd3331a3551a79db928574ccf95))
+    - Update incompatible deps ([`72be97c`](https://github.com/egrieco/eunicode/commit/72be97c7fc666d6e72069635203af0581c64c9f5))
+    - Add Tim Bray's Bad Unicode reference ([`84d0fcc`](https://github.com/egrieco/eunicode/commit/84d0fcc84415823180dfcb07eb28c9bb2222f8bb))
+    - Add additional pass-through characters ([`d958320`](https://github.com/egrieco/eunicode/commit/d958320d582ac866ce31619c39df10801e934da4))
+    - Add features section ([`9d2dc2b`](https://github.com/egrieco/eunicode/commit/9d2dc2b1e16e40c3a764fbccc360de6fbca3a733))
+    - Add the --raw-bytes flag ([`0b5e0d6`](https://github.com/egrieco/eunicode/commit/0b5e0d60b339c58d0bc41186cf31355985ea342e))
+</details>
+
 ## v0.1.4 (2025-07-23)
+
+<csr-id-23c4095b30dbf2d171ccb4fa342d1c670cc62060/>
 
 ### Refactor
 
@@ -16,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 1 commit contributed to the release.
+ - 2 commits contributed to the release.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -27,6 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release eunicode v0.1.4 ([`6687496`](https://github.com/egrieco/eunicode/commit/6687496f41c7bd0fc32ed07fe38d9738a9ab994d))
     - Switch to Vec<Action> ([`23c4095`](https://github.com/egrieco/eunicode/commit/23c4095b30dbf2d171ccb4fa342d1c670cc62060))
 </details>
 

@@ -1,6 +1,6 @@
 [package]
 name = "eunicode"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2024"
 authors = ["Elio Grieco <grieco@egx.com>"]
 description = "A text processing CLI and library that helps sanitize text by removing the naughty bits to make strings good and safe."
