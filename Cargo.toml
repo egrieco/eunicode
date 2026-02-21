@@ -19,16 +19,16 @@ exclude = [".vscode/*", ".gitignore", ".aider*"]
 # manifest field list: https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.0", features = ["derive"] }
-arboard = "3.0"
+clap = { version = "4.5", features = ["derive"] }
+arboard = "3.6"
 atty = "0.2"
 deunicode = "1.6.2"
-ammonia = "4.1.0"
+ammonia = "4.1.2"
 linkify = "0.10.0"
-rustrict = "0.7.35"
+rustrict = "0.7.38"
 limace = "0.1.1"
 unicode-security = "0.1.2"
-charname = "1.16.0"
+charname = "1.17.0"
 prettytable-rs = "0.10.0"
 ucd = "0.1.1"
 termwiz = "0.23.3"
