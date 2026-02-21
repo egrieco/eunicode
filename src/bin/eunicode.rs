@@ -4,7 +4,7 @@ use eunicode::raw_bytes::RawBytes;
 use eunicode::unicode_string::UnicodeString;
 use std::{
     fs::File,
-    io::{self, Read, Write},
+    io::{self, IsTerminal, Read, Write},
     process::exit,
 };
 
@@ -72,7 +72,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut input_text = String::default();
 
     // Check if stdin has data (not a TTY and has content)
-    if !atty::is(atty::Stream::Stdin) {
+    if !io::stdin().is_terminal() {
         let mut buffer = RawBytes::default();
         io::stdin().read_to_end(&mut buffer.0)?;
         if !buffer.is_empty() {
@@ -137,7 +137,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 /// Write output to appropriate destinations based on args
 fn write_output(args: &Args, text: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let stdout_is_redirected = !atty::is(atty::Stream::Stdout);
+    let stdout_is_redirected = !io::stdout().is_terminal();
 
     // Write to output files
     for file_path in &args.output_files {
